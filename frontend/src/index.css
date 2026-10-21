@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { color-scheme: dark; }
+  body {
+    @apply bg-pitch-950 font-sans text-chalk antialiased;
+    min-height: 100dvh;
+  }
+  :focus-visible { outline: 2px solid #D4FF3A; outline-offset: 2px; }
+  ::selection { background: #D4FF3A; color: #05110C; }
+}
+
+@layer components {
+  /* Mown-grass stripes: the signature texture of every surface. */
+  .turf {
+    background-color: #0D281D;
+    background-image: repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.028) 0 48px,
+      rgba(0, 0, 0, 0.06) 48px 96px
+    );
+  }
+  .turf-night {
+    background:
+      radial-gradient(120% 70% at 15% -10%, rgba(212, 255, 58, 0.16), transparent 55%),
+      radial-gradient(90% 60% at 100% 0%, rgba(92, 200, 255, 0.10), transparent 55%),
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.025) 0 64px, rgba(0, 0, 0, 0.08) 64px 128px),
+      #0A1F16;
+  }
+  .chalk-line { border-color: rgba(242, 246, 239, 0.14); }
+
+  .card {
+    @apply rounded-2xl border border-white/10 bg-pitch-900/80 backdrop-blur;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
+      disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-lime { @apply btn bg-lime text-pitch-950 hover:bg-lime-soft active:translate-y-px; }
+  .btn-ghost { @apply btn border border-white/15 text-chalk hover:border-lime/60 hover:text-lime; }
+  .btn-danger { @apply btn border border-flag/40 text-flag hover:bg-flag/10; }
+  .input {
+    @apply w-full rounded-xl border border-white/15 bg-pitch-950/70 px-3.5 py-2.5 text-chalk placeholder:text-chalk-mute
+      focus:border-lime focus:outline-none;
+  }
+  .label { @apply mb-1.5 block text-xs font-semibold uppercase tracking-wider text-chalk-dim; }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-sm font-medium
+      text-chalk-dim transition hover:border-lime/60 hover:text-chalk;
+  }
+  .chip-on { @apply border-lime bg-lime text-pitch-950 hover:text-pitch-950; }
+  .display { @apply font-display uppercase leading-[0.9] tracking-wide; }
+  .score { @apply font-score tabular-nums; }
+  .eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.2em] text-lime; }
+
+  /* Match-ticket perforation between stub and body. */
+  .perforated {
+    position: relative;
+    border-top: 2px dashed rgba(242, 246, 239, 0.2);
+  }
+  .perforated::before,
+  .perforated::after {
+    content: "";
+    position: absolute;
+    top: -14px;
+    width: 26px;
+    height: 26px;
+    border-radius: 9999px;
+    background: #05110C;
+  }
+  .perforated::before { left: -13px; }
+  .perforated::after { right: -13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

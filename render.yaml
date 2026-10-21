@@ -1,0 +1,44 @@
+# Render blueprint: API + worker + Postgres in Singapore (closest region to India).
+services:
+  - type: web
+    name: turftime-api
+    runtime: python
+    region: singapore
+    plan: starter
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase: { name: turftime-db, property: connectionString }
+      - key: JWT_SECRET
+        generateValue: true
+      - key: OTP_DEV_MODE
+        value: "false"
+      - key: PAYMENTS_MODE
+        value: razorpay
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+  - type: worker
+    name: turftime-worker
+    runtime: python
+    region: singapore
+    plan: starter
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m app.worker
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase: { name: turftime-db, property: connectionString }
+      - key: JWT_SECRET
+        sync: false
+databases:
+  - name: turftime-db
+    region: singapore
+    plan: basic-256mb
+    postgresMajorVersion: "16"

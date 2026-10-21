@@ -1,0 +1,12 @@
+# Local Postgres for running the API and tests against the real double-booking constraint.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: turf
+      POSTGRES_PASSWORD: turf
+      POSTGRES_DB: turf
+    ports: ["5432:5432"]
+    volumes: [turfdata:/var/lib/postgresql/data]
+volumes:
+  turfdata:
