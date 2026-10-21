@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { Spinner } from "./components/ui";
 import "./index.css";
 import { PlaceProvider, SessionProvider } from "./lib/session";
@@ -23,6 +24,7 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
+    <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
         <PlaceProvider>
@@ -50,5 +52,6 @@ createRoot(document.getElementById("root")!).render(
         </PlaceProvider>
       </SessionProvider>
     </QueryClientProvider>
+    </ErrorBoundary>
   </StrictMode>,
 );
