@@ -176,7 +176,7 @@ function VenueCard({ venue: v, sport, date, index }: { venue: Venue; sport: stri
               <span className="score text-sm text-chalk">{rupees(v.next_slot.price)}</span>
             </>
           ) : (
-            <span className="text-sm text-chalk-mute">Fully booked this day</span>
+            <span className="text-sm text-chalk-mute">{date === isoDay(new Date()) ? "No more slots today" : "Fully booked this day"}</span>
           )}
         </div>
       </div>
