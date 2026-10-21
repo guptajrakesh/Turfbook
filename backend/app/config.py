@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     max_active_holds: int = 3
     default_timezone: str = "Asia/Kolkata"
     cors_origins: str = "http://localhost:5173"
+    cookie_secure: bool = False  # true behind HTTPS in production
 
 
 @lru_cache

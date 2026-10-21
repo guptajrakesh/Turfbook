@@ -53,6 +53,27 @@ TEST_DATABASE_URL=postgresql+psycopg://turf:turf@localhost/turf pytest -q
 The Postgres run includes a race test: two sessions insert the same slot at once, and the exclusion constraint lets exactly
 one through. CI runs both suites, plus `ruff` and the frontend type-check and build (`.github/workflows/ci.yml`).
 
+## Deploy (Render + Vercel)
+
+The API, worker and Postgres run on Render; the web app runs on Vercel. Vercel proxies `/api/*` to Render, so the browser
+sees one domain and the login cookie works.
+
+1. **Render** (about $35/month: starter web $7, worker $7, Postgres basic ~$20):
+   Dashboard → **New → Blueprint** → connect `guptajrakesh/Turfbook` → **Apply**. This reads `render.yaml` and creates
+   `turftime-api`, `turftime-worker` and `turftime-db` in Singapore. The first deploy creates the tables and loads the demo data.
+   Check that `https://turftime-api.onrender.com/api/health` returns `{"ok":true}`.
+2. **Vercel**: **Add New → Project** → import `guptajrakesh/Turfbook` → set **Root Directory** to `frontend` (Vite is detected)
+   → **Deploy**.
+3. If Render gave the API a different URL (the name was taken), put that URL in `frontend/vercel.json` and push.
+
+Every push to `main` redeploys both.
+
+### Going live (after the demo)
+
+The blueprint deploys a demo: OTP codes appear on screen and payments are simulated. For real customers, connect an SMS
+provider in `routers/auth.py` and set `OTP_DEV_MODE=false`. Then set `PAYMENTS_MODE=razorpay` with `RAZORPAY_KEY_ID` and the
+webhook secret, and point the Razorpay webhook at `https://<your-domain>/api/v1/webhooks/razorpay`.
+
 ## What maps to the spec
 
 | Spec area | Where |

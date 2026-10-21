@@ -1,4 +1,6 @@
 # Render blueprint: API + worker + Postgres in Singapore (closest region to India).
+# Deploys a DEMO: OTP codes are shown on screen and payments are simulated, because
+# no SMS provider or Razorpay account is connected yet. See README "Going live".
 services:
   - type: web
     name: turftime-api
@@ -7,23 +9,26 @@ services:
     plan: starter
     rootDir: backend
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    preDeployCommand: python -m app.seed  # creates tables; loads demo data only into an empty database
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips '*'
     healthCheckPath: /api/health
     envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
       - key: DATABASE_URL
         fromDatabase: { name: turftime-db, property: connectionString }
       - key: JWT_SECRET
         generateValue: true
+      - key: COOKIE_SECURE
+        value: "true"
       - key: OTP_DEV_MODE
-        value: "false"
+        value: "true"
       - key: PAYMENTS_MODE
-        value: razorpay
+        value: mock
       - key: RAZORPAY_KEY_ID
         sync: false
       - key: RAZORPAY_WEBHOOK_SECRET
-        sync: false
-      - key: CORS_ORIGINS
-        sync: false
+        generateValue: true
   - type: worker
     name: turftime-worker
     runtime: python
@@ -33,10 +38,10 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: python -m app.worker
     envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
       - key: DATABASE_URL
         fromDatabase: { name: turftime-db, property: connectionString }
-      - key: JWT_SECRET
-        sync: false
 databases:
   - name: turftime-db
     region: singapore

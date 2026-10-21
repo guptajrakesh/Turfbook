@@ -22,7 +22,7 @@ def session_payload(db: Session, user: User, response: Response, tenant_id: str 
     m = next((m for m in memberships if m.tenant_id == tenant_id), memberships[0] if memberships else None)
     refresh = make_token(user.id, "refresh", tenant_id=m.tenant_id if m else None, role=m.role if m else None)
     response.set_cookie(
-        REFRESH_COOKIE, refresh, httponly=True, samesite="lax", secure=not get_settings().otp_dev_mode,
+        REFRESH_COOKIE, refresh, httponly=True, samesite="lax", secure=get_settings().cookie_secure,
         max_age=get_settings().refresh_token_days * 86400, path="/api/v1/auth",
     )
     return {
